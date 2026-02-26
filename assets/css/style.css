@@ -1,0 +1,20 @@
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial,sans-serif;background:#f6f8fa;color:#111827}
+.container{max-width:1060px;margin:0 auto;padding:16px}
+.topbar{background:#0b7a4b;color:#fff}
+.topbar a{color:#fff;text-decoration:none;margin-right:14px}
+.brand a{font-weight:700}
+.nav{float:right}
+.card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px;margin:16px 0;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.btn{display:inline-block;padding:10px 14px;border-radius:8px;border:1px solid transparent;background:#0b7a4b;color:#fff;text-decoration:none}
+.btn.secondary{background:#fff;color:#0b7a4b;border-color:#0b7a4b}
+.input{width:100%;padding:10px;border:1px solid #d1d5db;border-radius:8px}
+.label{display:block;margin:8px 0 4px}
+.table{width:100%;border-collapse:collapse}
+.table th,.table td{border:1px solid #e5e7eb;padding:8px;text-align:left}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.badge{background:#eafff3;color:#0b7a4b;border:1px solid #a7f3d0;padding:3px 8px;border-radius:999px;font-size:12px}
+.footer{background:#f1f5f9;margin-top:32px}
+.alert{padding:10px 14px;border-radius:8px;margin:8px 0}
+.alert.error{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}
+.alert.success{background:#dcfce7;color:#166534;border:1px solid #bbf7d0}
+form{margin:0}
