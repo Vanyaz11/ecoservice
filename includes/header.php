@@ -15,12 +15,16 @@ $role = $u['role'] ?? null;
 <body>
 <header class="topbar">
   <div class="container">
-    <div class="brand"><a href="<?php echo url('index.php'); ?>">Эко‑сервис</a></div>
+    <div class="header-top">
+      <a class="header-logo" href="<?php echo url('index.php'); ?>" aria-label="На главную">
+        <img src="<?php echo url('logo-muiv-white.svg'); ?>" alt="Московский университет имени С. Ю. Витте">
+      </a>
+      <div class="brand"><a href="<?php echo url('index.php'); ?>">Сервис формирования <br> экологической культуры обучающихся</a></div>
+    </div>
     <nav class="nav" aria-label="Главное меню">
       <a href="<?php echo url('index.php'); ?>">Главная</a>
       <a href="<?php echo url('about.php'); ?>">О проекте</a>
-      <?php if (!$u): ?>
-      <?php else: ?>
+      <?php if ($u): ?>
         <?php if ($role === 'student'): ?>
           <a href="<?php echo url('courses.php'); ?>">Курсы</a>
           <a href="<?php echo url('eco_diary.php'); ?>">Эко‑дневник</a>

@@ -1,7 +1,7 @@
 </main>
 <footer class="footer">
   <div class="container">
-    <p>© <?php echo date('Y'); ?> Экологическая культура — Басов Вячеслав Викторович</p>
+    <p>© <?php echo date('Y'); ?> Московский университет имени С.Ю. Витте</p>
   </div>
 </footer>
 </body>

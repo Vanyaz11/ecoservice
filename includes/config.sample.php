@@ -3,7 +3,7 @@
 return [
   'db' => [
     'host' => 'localhost',
-    'name' => 'eco_service',
+    'name' => 'ecoservice',
     'user' => 'root',
     'pass' => '',
     'charset' => 'utf8mb4'

@@ -1,0 +1,3 @@
+Options -Indexes
+RewriteEngine On
+# If you serve from subfolder, set base_url in config. This .htaccess is minimal.

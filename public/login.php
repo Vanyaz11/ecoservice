@@ -23,8 +23,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <input class="input" type="password" name="password" required>
     <p style="margin-top:12px"><button class="btn" type="submit">Войти</button></p>
   </form>
-  <span class="badge">teacher@mail.ru / 12345</span><br>
-  <span class="badge">student@mail.ru / 12345</span>
+  <span class="badge">Студент: petrov@mail.ru / 2991796</span><br>
+  <span class="badge">Преподаватель: ya@mail.ru / 2991796</span><br>
+  <span class="badge">Администратор: sidorov@mail.ru / 2991796</span>
   <p>Нет аккаунта? <a href="<?php echo url('register.php'); ?>">Регистрация</a></p>
 </div>
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
