@@ -28,7 +28,7 @@ $is_enrolled = (bool)$en->fetchColumn();
 if (!$is_enrolled && !is_teacher()) {
   // allow quick enroll
   if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['enroll'])) {
-    $ins = $pdo->prepare("INSERT IGNORE INTO enrollments (user_id, course_id) VALUES (?, ?)");
+    $ins = $pdo->prepare("INSERT INTO enrollments (user_id, course_id) VALUES (?, ?) ON CONFLICT DO NOTHING");
     $ins->execute([$u['id'], $id]);
     check_and_award_for_entry($u['id']);
     header('Location: learning_view.php?id=' . $id);

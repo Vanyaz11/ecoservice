@@ -7,7 +7,7 @@ require_login();
 
 $pdo = db();
 if (isset($_POST['enroll'])) {
-  $stmt = $pdo->prepare("INSERT IGNORE INTO enrollments (user_id, course_id) VALUES (?, ?)");
+  $stmt = $pdo->prepare("INSERT INTO enrollments (user_id, course_id) VALUES (?, ?) ON CONFLICT DO NOTHING");
   $stmt->execute([current_user()['id'], (int)$_POST['course_id']]);
   check_and_award_for_entry(current_user()['id']);
 }

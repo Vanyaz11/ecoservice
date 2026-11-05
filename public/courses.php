@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if (isset($_POST['enroll'])) {
     $course_id = (int)($_POST['course_id'] ?? 0);
     if ($course_id > 0) {
-      $stmt = $pdo->prepare("INSERT IGNORE INTO enrollments (user_id, course_id) VALUES (?, ?)");
+      $stmt = $pdo->prepare("INSERT INTO enrollments (user_id, course_id) VALUES (?, ?) ON CONFLICT DO NOTHING");
       $stmt->execute([$u['id'], $course_id]);
       // award badges related to learning
       check_and_award_for_entry($u['id']);
