@@ -16,6 +16,8 @@ function site_menu(?string $role): array {
     ['Инициативы', 'initiatives.php'],
     ['Эко-привычки', 'info1.php'],
     ['Раздельный сбор', 'info2.php'],
+    ['Энергосбережение', 'info3.php'],
+    ['Достижения', 'info4.php'],
     ['Контакты', 'contacts.php'],
     ['Справка', 'help.php'],
   ];
