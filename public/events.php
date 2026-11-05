@@ -3,11 +3,11 @@ require_once __DIR__ . '/../includes/header.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/badges.php';
-require_login();
-
 $pdo = db();
+$u = current_user(); // гость видит афишу, запись — после входа
 $flash = null;
 if (isset($_POST['register_event'])) {
+  require_login();
   $uid = (int)current_user()['id'];
   $eventId = (int)$_POST['event_id'];
   // Проверка мест и вставка выполняются в одной транзакции с блокировкой строки
@@ -44,25 +44,34 @@ $events = $pdo->query("SELECT id, title, starts_at, location, description, seats
   (seats - (SELECT COUNT(*) FROM event_registrations er WHERE er.event_id=events.id)) as left_seats
   FROM events ORDER BY starts_at ASC")->fetchAll();
 
-$my = $pdo->prepare("SELECT event_id FROM event_registrations WHERE user_id=?");
-$my->execute([current_user()['id']]);
-$my_ids = array_column($my->fetchAll(), 'event_id');
+$my_ids = [];
+if ($u) {
+  $my = $pdo->prepare("SELECT event_id FROM event_registrations WHERE user_id=?");
+  $my->execute([$u['id']]);
+  $my_ids = array_column($my->fetchAll(), 'event_id');
+}
 ?>
 <div class="card">
+  <h2>Экологические мероприятия</h2>
+  <p>Афиша акций, лекций и субботников НОЦУР. Число свободных мест обновляется автоматически.</p>
   <?php if ($flash): ?><div class="alert <?php echo $flash[0]==="ok" ? "success" : "error"; ?>"><?php echo h($flash[1]); ?></div><?php endif; ?>
+  <?php if ($u): ?>
   <div style="margin:8px 0 14px">
     <a class="btn" href="<?php echo url('export_events.php?type=xlsx'); ?>">Скачать .xlsx</a>
     <a class="btn secondary" href="<?php echo url('export_events.php?type=docx'); ?>">Скачать .docx</a>
   </div>
+  <?php endif; ?>
   <div class="grid">
     <?php foreach ($events as $ev): ?>
       <div class="card">
         <h3><?php echo h($ev['title']); ?></h3>
-        <p><strong>Когда:</strong> <?php echo h($ev['starts_at']); ?><br>
+        <p><strong>Когда:</strong> <?php echo date('d.m.Y H:i', strtotime($ev['starts_at'])); ?><br>
         <strong>Где:</strong> <?php echo h($ev['location']); ?></p>
         <p><?php echo h($ev['description']); ?></p>
         <p class="badge">Мест осталось: <?php echo max(0,(int)$ev['left_seats']); ?></p>
-        <?php if (in_array($ev['id'], $my_ids)): ?>
+        <?php if (!$u): ?>
+          <a class="btn secondary" href="<?php echo url('login.php'); ?>">Войдите, чтобы записаться</a>
+        <?php elseif (in_array($ev['id'], $my_ids)): ?>
           <span class="badge">Вы зарегистрированы</span>
         <?php elseif ((int)$ev['left_seats'] <= 0): ?>
           <span class="badge">Нет мест</span>
