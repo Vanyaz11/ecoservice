@@ -49,7 +49,7 @@ $my->execute([current_user()['id']]);
 $my_ids = array_column($my->fetchAll(), 'event_id');
 ?>
 <div class="card">
-  <?php if ($flash): ?><div class="alert <?php echo $flash[0]==="ok" ? "alert-ok" : "alert-err"; ?>"><?php echo h($flash[1]); ?></div><?php endif; ?>
+  <?php if ($flash): ?><div class="alert <?php echo $flash[0]==="ok" ? "success" : "error"; ?>"><?php echo h($flash[1]); ?></div><?php endif; ?>
   <div style="margin:8px 0 14px">
     <a class="btn" href="<?php echo url('export_events.php?type=xlsx'); ?>">Скачать .xlsx</a>
     <a class="btn secondary" href="<?php echo url('export_events.php?type=docx'); ?>">Скачать .docx</a>
