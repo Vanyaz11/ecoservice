@@ -1,16 +1,34 @@
 <?php
-// Глобальное меню сайта веб‑сервиса экологической культуры
-// Поддерживает верхнее и боковое отображение (рендерится компонентами).
-return [
-  ['key'=>'dashboard','title'=>'Главная','url'=>'/index.php','icon'=>'home'],
-  ['key'=>'courses','title'=>'Курсы','url'=>'/courses/index.php','icon'=>'layers'],
-  ['key'=>'diary','title'=>'Эко‑дневник','url'=>'/diary/index.php','icon'=>'edit','roles'=>['student']],
-  ['key'=>'events','title'=>'События','url'=>'/events/index.php','icon'=>'calendar'],
-  ['key'=>'materials','title'=>'Материалы','url'=>'/materials/index.php','icon'=>'file-text'],
-  ['key'=>'badges','title'=>'Бейджи','url'=>'/badges/index.php','icon'=>'award','roles'=>['student']],
-  ['key'=>'community','title'=>'Сообщество','url'=>'/community/index.php','icon'=>'users'],
-  ['key'=>'stats','title'=>'Статистика','url'=>'/stats/index.php','icon'=>'bar-chart'],
-  ['key'=>'guides','title'=>'Руководства','url'=>'/guides/index.php','icon'=>'help-circle'],
-  ['key'=>'profile','title'=>'Личный кабинет','url'=>'/profile/index.php','icon'=>'user'],
-  ['key'=>'admin','title'=>'Администрирование','url'=>'/admin/index.php','icon'=>'settings', 'roles'=>['admin','teacher']],
-];
+/**
+ * Меню сайта. Возвращает массив пунктов для текущей роли.
+ * Каждый пункт: [название, путь относительно public/].
+ * Гостю доступно 11 открытых разделов, авторизованным — дополнительно разделы своей роли.
+ */
+function site_menu(?string $role): array {
+  $guest = [
+    ['Главная', 'index.php'],
+    ['О проекте', 'about.php'],
+    ['Курсы', 'courses.php'],
+    ['События', 'events.php'],
+    ['Новости', 'news.php'],
+    ['Библиотека', 'library.php'],
+    ['Эко-карта', 'eco_map.php'],
+    ['Инициативы', 'initiatives.php'],
+    ['Эко-привычки', 'info1.php'],
+    ['Раздельный сбор', 'info2.php'],
+    ['Контакты', 'contacts.php'],
+    ['Справка', 'help.php'],
+  ];
+  if ($role === null) {
+    return array_merge($guest, [['Регистрация', 'register.php'], ['Вход', 'login.php']]);
+  }
+  $common = [['Личный кабинет', 'dashboard.php'], ['Материалы', 'materials.php'], ['Отчёты', 'reports.php']];
+  if ($role === 'student') {
+    $own = [['Эко-дневник', 'eco_diary.php'], ['Достижения', 'achievements.php']];
+  } elseif ($role === 'teacher') {
+    $own = [['Мои курсы', 'teacher/dashboard.php'], ['Мои события', 'teacher/events.php'], ['Студенты', 'teacher/students.php']];
+  } else {
+    $own = [['Мои курсы', 'teacher/dashboard.php'], ['Студенты', 'teacher/students.php'], ['Администрирование', 'admin/index.php']];
+  }
+  return array_merge($guest, $common, $own, [['Выход', 'logout.php']]);
+}

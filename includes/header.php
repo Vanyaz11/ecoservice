@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/helpers.php';
+require_once __DIR__ . '/menu.php';
 $u = current_user();
 $role = $u['role'] ?? null;
 ?>
@@ -9,7 +10,7 @@ $role = $u['role'] ?? null;
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Эко‑сервис</title>
+  <title><?php echo h($pageTitle ?? 'Эко-сервис'); ?> — Эко-сервис МУИВ</title>
   <link rel="stylesheet" href="<?php echo url('style.css'); ?>">
 </head>
 <body>
@@ -22,31 +23,9 @@ $role = $u['role'] ?? null;
       <div class="brand"><a href="<?php echo url('index.php'); ?>">Сервис формирования <br> экологической культуры обучающихся</a></div>
     </div>
     <nav class="nav" aria-label="Главное меню">
-      <a href="<?php echo url('index.php'); ?>">Главная</a>
-      <a href="<?php echo url('about.php'); ?>">О проекте</a>
-      <?php if ($u): ?>
-        <?php if ($role === 'student'): ?>
-          <a href="<?php echo url('courses.php'); ?>">Курсы</a>
-          <a href="<?php echo url('eco_diary.php'); ?>">Эко‑дневник</a>
-          <a href="<?php echo url('events.php'); ?>">События</a>
-          <a href="<?php echo url('materials.php'); ?>">Материалы</a>
-          <a href="<?php echo url('achievements.php'); ?>">Достижения</a>
-          <a href="<?php echo url('reports.php'); ?>">Отчёты</a>
-        <?php else: ?>
-          <a href="<?php echo url('teacher/dashboard.php'); ?>">Курсы</a>
-          <a href="<?php echo url('teacher/events.php'); ?>">События</a>
-          <a href="<?php echo url('materials.php'); ?>">Материалы</a>
-          <a href="<?php echo url('teacher/students.php'); ?>">Студенты</a>
-          <a href="<?php echo url('reports.php'); ?>">Отчёты</a>
-        <?php endif; ?>
-      <?php endif; ?>
-      <?php if ($u): ?>
-        <a href="<?php echo url('dashboard.php'); ?>">Личный кабинет</a>
-        <a href="<?php echo url('logout.php'); ?>">Выход</a>
-      <?php else: ?>
-        <a href="<?php echo url('register.php'); ?>">Регистрация</a>
-        <a href="<?php echo url('login.php'); ?>">Вход</a>
-      <?php endif; ?>
+      <?php foreach (site_menu($role) as [$title, $path]): ?>
+        <a href="<?php echo url($path); ?>"<?php echo basename($_SERVER['SCRIPT_NAME']) === basename($path) ? ' class="active"' : ''; ?>><?php echo h($title); ?></a>
+      <?php endforeach; ?>
     </nav>
   </div>
 </header>
