@@ -1,0 +1,14 @@
+# Blueprint для бесплатного размещения на Render (https://render.com):
+# веб-сервис из Dockerfile + внешняя бесплатная PostgreSQL (Neon, Supabase или Render Postgres).
+services:
+  - type: web
+    name: ecoservice
+    runtime: docker
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        sync: false          # вставить строку подключения к PostgreSQL в панели Render
+      - key: API_TOKEN
+        generateValue: true
+      - key: APP_AUTHOR
+        value: "Басов В. В."
