@@ -9,20 +9,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $short = trim($_POST['short_desc'] ?? '');
   $content = trim($_POST['content'] ?? '');
   if ($title) {
-    // Support both DB schemas (with or without author_id)
-    $hasAuthor = false;
-    try {
-      $q = $pdo->query("SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME='courses' AND COLUMN_NAME='author_id' LIMIT 1");
-      $hasAuthor = (bool)$q->fetch();
-    } catch (Exception $e) { $hasAuthor = false; }
-
-    if ($hasAuthor) {
-      $st = $pdo->prepare("INSERT INTO courses (title, short_desc, content, author_id) VALUES (?,?,?,?)");
-      $st->execute([$title, $short, $content, current_user()['id']]);
-    } else {
-      $st = $pdo->prepare("INSERT INTO courses (title, short_desc, content) VALUES (?,?,?)");
-      $st->execute([$title, $short, $content]);
-    }
+    $st = $pdo->prepare("INSERT INTO courses (title, short_desc, content, author_id) VALUES (?,?,?,?)");
+    $st->execute([$title, $short, $content, current_user()['id']]);
     header('Location: '.url('teacher/dashboard.php', true));
     exit;
   } else { $error = 'Укажите название курса'; }

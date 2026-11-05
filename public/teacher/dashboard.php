@@ -5,25 +5,13 @@ require_login(); require_teacher();
 $pdo = db();
 $uid = current_user()['id'];
 
-// Support both DB schemas: with or without courses.author_id
-$hasAuthor = false;
-try {
-  $st = $pdo->prepare("SELECT COUNT(*) AS c
-                       FROM INFORMATION_SCHEMA.COLUMNS
-                       WHERE TABLE_SCHEMA = DATABASE()
-                         AND TABLE_NAME = 'courses'
-                         AND COLUMN_NAME = 'author_id'");
-  $st->execute();
-  $hasAuthor = ((int)($st->fetch()['c'] ?? 0)) > 0;
-} catch (Exception $e) { $hasAuthor = false; }
-
-if ($hasAuthor) {
+// Преподаватель видит только свои курсы, администратор — все
+if (user_role() === 'admin') {
+  $my = $pdo->query("SELECT id, title FROM courses ORDER BY id DESC")->fetchAll();
+} else {
   $courses = $pdo->prepare("SELECT id, title FROM courses WHERE author_id = ? ORDER BY id DESC");
   $courses->execute([$uid]);
   $my = $courses->fetchAll();
-} else {
-  // Old schema: show all courses
-  $my = $pdo->query("SELECT id, title FROM courses ORDER BY id DESC")->fetchAll();
 }
 ?>
 
