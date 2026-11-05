@@ -7,9 +7,9 @@ function ensure_badge($code, $name, $description = null) {
   $st->execute([$code]);
   $id = $st->fetchColumn();
   if (!$id) {
-    $ins = $pdo->prepare("INSERT INTO badges (code, name, description) VALUES (?,?,?)");
+    $ins = $pdo->prepare("INSERT INTO badges (code, name, description) VALUES (?,?,?) RETURNING id");
     $ins->execute([$code, $name, $description]);
-    $id = $pdo->lastInsertId();
+    $id = $ins->fetchColumn();
   }
   return $id;
 }
@@ -21,9 +21,9 @@ function award_badge($user_id, $code, $name, $description = null) {
   $chk = $pdo->prepare("SELECT 1 FROM user_badges WHERE user_id = ? AND badge_id = ?");
   $chk->execute([$user_id, $bid]);
   if ($chk->fetchColumn()) return false;
-  $ins = $pdo->prepare("INSERT INTO user_badges (user_id, badge_id) VALUES (?,?)");
+  $ins = $pdo->prepare("INSERT INTO user_badges (user_id, badge_id) VALUES (?,?) ON CONFLICT DO NOTHING");
   $ins->execute([$user_id, $bid]);
-  return true;
+  return $ins->rowCount() > 0;
 }
 
 function user_badges($user_id) {
