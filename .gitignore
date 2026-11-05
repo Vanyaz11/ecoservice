@@ -1,0 +1,17 @@
+# Локальная конфигурация с паролями к БД — не хранится в репозитории
+includes/config.php
+
+# Загруженные пользователями файлы (кроме служебных)
+uploads/materials/*
+!uploads/materials/.htaccess
+
+# Временные выгрузки
+exports/*
+!exports/.htaccess
+
+# Служебные файлы ОС и редакторов
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log
