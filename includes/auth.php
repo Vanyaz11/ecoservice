@@ -30,7 +30,7 @@ function require_role($roles) {
 
 function register_user($name, $email, $password) {
   $pdo = db();
-  $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+  $stmt = $pdo->prepare("SELECT id FROM users WHERE lower(email) = lower(?)");
   $stmt->execute([$email]);
   if ($stmt->fetch()) return "Пользователь с таким email уже существует";
   $hash = password_hash($password, PASSWORD_DEFAULT);
