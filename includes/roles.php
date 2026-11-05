@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/helpers.php';
 
 /** Роль текущего пользователя или null для гостя. */
 function user_role() {
