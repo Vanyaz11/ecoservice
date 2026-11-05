@@ -9,27 +9,17 @@ $u = current_user();
 $role = $u['role'] ?? 'student';
 $pdo = db();
 
+// Проверки наличия таблиц и столбцов через information_schema (PostgreSQL)
 function table_exists(PDO $pdo, string $table): bool {
-  try {
-    $pdo->query("SELECT 1 FROM `$table` LIMIT 1");
-    return true;
-  } catch (Exception $e) {
-    return false;
-  }
+  $st = $pdo->prepare("SELECT 1 FROM information_schema.tables WHERE table_schema = current_schema() AND table_name = ?");
+  $st->execute([$table]);
+  return (bool)$st->fetchColumn();
 }
 
 function column_exists(PDO $pdo, string $table, string $column): bool {
-  try {
-    $st = $pdo->prepare("SELECT COUNT(*) AS c
-                        FROM INFORMATION_SCHEMA.COLUMNS
-                        WHERE TABLE_SCHEMA = DATABASE()
-                          AND TABLE_NAME = ?
-                          AND COLUMN_NAME = ?");
-    $st->execute([$table, $column]);
-    return (int)($st->fetch()['c'] ?? 0) > 0;
-  } catch (Exception $e) {
-    return false;
-  }
+  $st = $pdo->prepare("SELECT 1 FROM information_schema.columns WHERE table_schema = current_schema() AND table_name = ? AND column_name = ?");
+  $st->execute([$table, $column]);
+  return (bool)$st->fetchColumn();
 }
 
 $hasBadges = table_exists($pdo, 'badges') && table_exists($pdo, 'user_badges');
