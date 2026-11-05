@@ -34,12 +34,12 @@ function user_badges($user_id) {
 }
 
 /**
- * Rule engine for eco diary submissions and other activities.
- * Called after creating an entry or other actions.
+ * Правила начисления бейджей. Вызывается после добавления эко-записи,
+ * записи на курс или мероприятие. Повторная выдача исключена в award_badge().
  */
 function check_and_award_for_entry($user_id) {
   $pdo = db();
-  // total number of diary entries
+  // общее число записей в эко-дневнике
   $cnt = $pdo->prepare("SELECT COUNT(*) FROM eco_entries WHERE user_id = ?");
   $cnt->execute([$user_id]);
   $n = (int)$cnt->fetchColumn();
@@ -48,25 +48,35 @@ function check_and_award_for_entry($user_id) {
   if ($n >= 5) award_badge($user_id, 'five_entries', 'Пять поступков', 'Сделано 5 записей в эко‑дневник');
   if ($n >= 10) award_badge($user_id, 'ten_entries', 'Эко‑активист', 'Сделано 10 записей в эко‑дневник');
 
-  // Thematic badge: пластик
-  $plast = $pdo->prepare("SELECT COUNT(*) FROM eco_entries WHERE user_id=? AND type LIKE '%пластик%'");
+  // тематический бейдж: отказ от пластика
+  $plast = $pdo->prepare("SELECT COUNT(*) FROM eco_entries WHERE user_id=? AND type ILIKE '%пластик%'");
   $plast->execute([$user_id]);
   if ((int)$plast->fetchColumn() >= 3) {
     award_badge($user_id, 'plastic_free', 'Меньше пластика', 'Три и более действий по отказу от одноразового пластика');
   }
 
-  // Participation in events
+  // участие в мероприятиях
   $evt = $pdo->prepare("SELECT COUNT(*) FROM event_registrations WHERE user_id=?");
   $evt->execute([$user_id]);
   if ((int)$evt->fetchColumn() >= 1) {
     award_badge($user_id, 'first_event', 'Вместе на природе', 'Участие хотя бы в одном эко‑событии');
   }
 
-  // Learning: enrollments
+  // обучение: записи на курсы
   $crs = $pdo->prepare("SELECT COUNT(*) FROM enrollments WHERE user_id=?");
   $crs->execute([$user_id]);
   $c = (int)$crs->fetchColumn();
   if ($c >= 1) award_badge($user_id, 'first_course', 'Начал обучение', 'Запись хотя бы на один курс');
   if ($c >= 3) award_badge($user_id, 'three_courses', 'Любознательный', 'Запись на 3 курса');
 
+}
+
+/** Проверка условий после записи на мероприятие (тот же набор правил). */
+function check_and_award_for_event($user_id) {
+  check_and_award_for_entry($user_id);
+}
+
+/** Проверка условий после записи на курс. */
+function check_and_award_for_course($user_id) {
+  check_and_award_for_entry($user_id);
 }
