@@ -56,6 +56,14 @@ $map = [
   'login.php' => 'Вход',
   'logout.php' => 'Выход',
 
+  // панель администратора
+  'admin' => 'Администрирование',
+  'admin/index.php' => 'Администрирование',
+  'admin/users.php' => 'Пользователи',
+  'admin/feedback.php' => 'Обращения',
+  'admin/badges.php' => 'Бейджи',
+  'admin/action_types.php' => 'Виды действий',
+  'admin/events.php' => 'Мероприятия',
   // разделы/папки (если доступны через веб)
   'guides' => 'Руководства',
   'guides/index.php' => 'Руководства',
