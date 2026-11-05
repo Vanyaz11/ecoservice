@@ -5,20 +5,19 @@ require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/helpers.php';
 require_once __DIR__ . '/../includes/badges.php';
 
-require_login();
-
 $pdo = db();
-$u = current_user();
+$u = current_user(); // гость видит каталог, записаться может только после входа
 
 // enroll / unenroll actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  require_login();
   if (isset($_POST['enroll'])) {
     $course_id = (int)($_POST['course_id'] ?? 0);
     if ($course_id > 0) {
       $stmt = $pdo->prepare("INSERT INTO enrollments (user_id, course_id) VALUES (?, ?) ON CONFLICT DO NOTHING");
       $stmt->execute([$u['id'], $course_id]);
       // award badges related to learning
-      check_and_award_for_entry($u['id']);
+      check_and_award_for_course($u['id']);
     }
   }
   if (isset($_POST['unenroll'])) {
@@ -41,8 +40,8 @@ $my = $pdo->prepare(
    WHERE e.user_id = ?
    ORDER BY e.enrolled_at DESC"
 );
-$my->execute([$u['id']]);
-$my_courses = $my->fetchAll();
+$my_courses = [];
+if ($u) { $my->execute([$u['id']]); $my_courses = $my->fetchAll(); }
 
 // All courses (with search)
 $params = [];
@@ -51,7 +50,7 @@ $sql = "SELECT c.id, c.title, c.short_desc,
                (SELECT COUNT(*) FROM enrollments e WHERE e.course_id = c.id) as enrolled_cnt
         FROM courses c";
 if ($q !== '') {
-  $sql .= " WHERE c.title LIKE ? OR c.short_desc LIKE ?";
+  $sql .= " WHERE c.title ILIKE ? OR c.short_desc ILIKE ?";
   $params[] = "%{$q}%";
   $params[] = "%{$q}%";
 }
@@ -78,6 +77,7 @@ $my_ids = array_column($my_courses, 'id');
   </form>
 </div>
 
+<?php if ($u): ?>
 <div class="card">
   <h3>Мои курсы</h3>
   <?php if (!$my_courses): ?>
@@ -102,6 +102,7 @@ $my_ids = array_column($my_courses, 'id');
     </div>
   <?php endif; ?>
 </div>
+<?php endif; ?>
 
 <div class="card">
   <h3>Все курсы</h3>
@@ -115,7 +116,9 @@ $my_ids = array_column($my_courses, 'id');
         <p><?php echo h($c['short_desc']); ?></p>
         <p class="badge">Разделов: <?php echo (int)$c['sections_cnt']; ?> · Учащихся: <?php echo (int)$c['enrolled_cnt']; ?></p>
 
-        <?php if (in_array($c['id'], $my_ids)): ?>
+        <?php if (!$u): ?>
+          <a class="btn secondary" href="<?php echo url('login.php'); ?>">Войдите, чтобы записаться</a>
+        <?php elseif (in_array($c['id'], $my_ids)): ?>
           <a class="btn secondary" href="<?php echo url('learning_view.php?id='.(int)$c['id']); ?>">Продолжить</a>
         <?php else: ?>
           <form method="post">
