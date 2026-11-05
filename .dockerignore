@@ -1,0 +1,5 @@
+.git
+includes/config.php
+uploads/materials/*
+exports/*
+*.log
