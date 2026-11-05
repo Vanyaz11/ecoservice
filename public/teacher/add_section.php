@@ -5,29 +5,13 @@ require_login(); require_teacher();
 $pdo = db();
 $course_id = (int)($_GET['course_id'] ?? 0);
 
-// Support both DB schemas (with or without author_id)
-$hasAuthor = false;
-try {
-  $q = $pdo->query("SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME='courses' AND COLUMN_NAME='author_id' LIMIT 1");
-  $hasAuthor = (bool)$q->fetch();
-} catch (Exception $e) { $hasAuthor = false; }
-
-if ($hasAuthor) {
-  $st = $pdo->prepare("SELECT id, title, author_id FROM courses WHERE id = ?");
-  $st->execute([$course_id]);
-  $course = $st->fetch();
-  if (!$course || (user_role() !== 'admin' && (int)$course['author_id'] !== (int)current_user()['id'])) {
-    echo "<div class='card'>Курс не найден или нет доступа</div>";
-    require_once __DIR__ . '/../../includes/footer.php'; exit;
-  }
-} else {
-  $st = $pdo->prepare("SELECT id, title FROM courses WHERE id = ?");
-  $st->execute([$course_id]);
-  $course = $st->fetch();
-  if (!$course) {
-    echo "<div class='card'>Курс не найден</div>";
-    require_once __DIR__ . '/../../includes/footer.php'; exit;
-  }
+// Раздел может добавить автор курса или администратор
+$st = $pdo->prepare("SELECT id, title, author_id FROM courses WHERE id = ?");
+$st->execute([$course_id]);
+$course = $st->fetch();
+if (!$course || (user_role() !== 'admin' && (int)$course['author_id'] !== (int)current_user()['id'])) {
+  echo "<div class='card'>Курс не найден или нет доступа</div>";
+  require_once __DIR__ . '/../../includes/footer.php'; exit;
 }
 $error = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
