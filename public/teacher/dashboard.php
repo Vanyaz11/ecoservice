@@ -34,8 +34,6 @@ if (user_role() === 'admin') {
       <h3 style="margin:0">Мои курсы</h3>
       <div class="small">Нажмите на название курса, чтобы посмотреть его как студент</div>
     </div>
-    <?php if (!$hasAuthor): ?>
-    <?php endif; ?>
   </div>
 
   <?php if (!$my): ?>

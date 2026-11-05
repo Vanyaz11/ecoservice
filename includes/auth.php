@@ -41,7 +41,7 @@ function register_user($name, $email, $password) {
 
 function login_user($email, $password) {
   $pdo = db();
-  $stmt = $pdo->prepare("SELECT id, name, email, password_hash, role FROM users WHERE email = ?");
+  $stmt = $pdo->prepare("SELECT id, name, email, password_hash, role FROM users WHERE lower(email) = lower(?)");
   $stmt->execute([$email]);
   $user = $stmt->fetch();
   if (!$user || !password_verify($password, $user['password_hash'])) {
