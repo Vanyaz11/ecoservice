@@ -396,7 +396,6 @@ INSERT INTO feedback (id, user_id, name, email, message, status, created_at) VAL
 (2, 4, 'Иванова М.К.', 'ivanova@mail.ru', 'Добавьте, пожалуйста, вид действия «Сдача макулатуры».', 'new', '2026-11-02 16:40:00');
 
 -- Синхронизация последовательностей после явной вставки идентификаторов
-\set QUIET on
 SELECT setval(pg_get_serial_sequence('users', 'id'),           (SELECT max(id) FROM users));
 SELECT setval(pg_get_serial_sequence('action_types', 'id'),    (SELECT max(id) FROM action_types));
 SELECT setval(pg_get_serial_sequence('courses', 'id'),         (SELECT max(id) FROM courses));
