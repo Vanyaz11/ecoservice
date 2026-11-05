@@ -66,7 +66,7 @@ if ($canUpload && $_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? 
             $size = (int)$f['size'];
             $relPath = 'uploads/materials/' . $safeName;
 
-            $stmt = $pdo->prepare("INSERT INTO materials (title, description, file_path, original_name, mime_type, file_size, uploaded_by) VALUES (?,?,?,?,?,?,?)");
+            $stmt = $pdo->prepare("INSERT INTO materials (title, description, type, file_path, original_name, mime_type, file_size, uploaded_by) VALUES (?,?,'file',?,?,?,?,?)");
             $stmt->execute([$title, $description, $relPath, $origName, $mime, $size, (int)$u['id']]);
 
             $success = 'Материал загружен.';
@@ -84,11 +84,11 @@ $sql = "SELECT m.*, u.name AS uploader_name
         FROM materials m
         LEFT JOIN users u ON u.id = m.uploaded_by";
 if ($q !== '') {
-  $sql .= " WHERE m.title LIKE ? OR m.description LIKE ?";
+  $sql .= " WHERE m.title ILIKE ? OR m.description ILIKE ?";
   $params[] = "%$q%";
   $params[] = "%$q%";
 }
-$sql .= " ORDER BY m.uploaded_by DESC";
+$sql .= " ORDER BY m.created_at DESC";
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $items = $stmt->fetchAll();
@@ -162,7 +162,7 @@ $items = $stmt->fetchAll();
             <td><b><?= h($m['title']) ?></b><div class="small"><?= h($m['original_name']) ?></div></td>
             <td><?= !empty($m['description']) ? nl2br(h($m['description'])) : '<span class="small">—</span>' ?></td>
             <td><?= !empty($m['uploader_name']) ? h($m['uploader_name']) : '<span class="small">—</span>' ?></td>
-            <td><?= h(date('d.m.Y H:i', strtotime($m['uploaded_at']))) ?></td>
+            <td><?= h(date('d.m.Y H:i', strtotime($m['created_at']))) ?></td>
             <td><a class="btn" href="<?= url('material_download.php?id='.(int)$m['id']) ?>">Скачать</a></td>
           </tr>
         <?php endforeach; ?>
